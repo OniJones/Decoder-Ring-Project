@@ -14,13 +14,21 @@ const polybiusModule = (function () {
     "15": "v", "25": "w", "35": "x", "45": "y", "55": "z",
   }
 
-  const decipher = {
-    "a": "11", "b": "21", "c": "31", "d": "41", "e": "51",
-    "f": "12", "g": "22", "h": "32", "i/j": "42", "k": "52",
-    "l": "13", "m": "23", "n": "33", "o": "43", "p": "53",
-    "q": "14", "r": "24", "s": "34", "t": "44", "u": "54",
-    "v": "15", "w": "25", "x": "35", "y": "45", "z": "55",
-  } 
+  const numericAlphabet = [
+    "11", "21", "31", "41", "51",
+    "12", "22", "32", "42", "52",
+    "13", "23", "33", "43", "53",
+    "14", "24", "34", "44", "54",
+    "15", "25", "35", "45", "55"
+  ]
+
+  const alphabet = [
+    "a", "b", "c", "d", "e", 
+    "f", "g", "h", "(i/j)", "k", 
+    "l", "m", "n", "o", "p", 
+    "q", "r", "s", "t", "u", 
+    "v", "w", "x", "y", "z"
+  ];
 
   // Helper function
   function getKeyByValue(object, value) {
@@ -44,10 +52,8 @@ const polybiusModule = (function () {
 
     if (encode) {
       let encodedMessage = '';
-
       for (let i = 0; i < lowerCaseInput.length; i++) {
         let letter = lowerCaseInput[i];
-
         if (!letter.match(/[a-z]/i)) {
           encodedMessage += letter;
         } else {
@@ -61,35 +67,24 @@ const polybiusModule = (function () {
         }
       }
       return encodedMessage;
-
     } else {
-      let decodedMessage = '';
-
-      let newInput = splitEveryTwoNums(input);
-      // console.log(`My new input is: ${newInput}`)
-      for (let i = 0; i < newInput.length; i++) {
-        let number = newInput[i];
-        // console.log(`My new number is: ${number}`)
-
-        if (number.match(' ')) {
-          decodedMessage += number;
-        } else {
-          
-
-          if (Object.values(decipher).includes(number)) {
-            let letter = getKeyByValue(decipher, number);
-            decodedMessage += letter;
-          }
+      let decodedMessage = [];
+      const message = input.split(" ");
+      for (let i = 0; i < message.length; i++) {
+        let number = message[i];
+        if (number.length % 2 == 1) {
+          return false;
         }
-        
-        
-        // if (number.split(' ') % 2 == 1) {
-        //   return false;
-        // }
+        let decodedWord = [];
+        let separatedLetters = splitEveryTwoNums(number);
+        separatedLetters.forEach((letter) => {
+          let decipherIndex = numericAlphabet.indexOf(letter);
+          let translatedLetter = alphabet[decipherIndex];
+          return decodedWord.push(translatedLetter);
+        })
+        decodedMessage.push(decodedWord.join(''))
       }
-      
-      console.log(`My decoded message is: ${decodedMessage}`)
-      return decodedMessage;
+      return decodedMessage.join(" ");
     }
   }
 
